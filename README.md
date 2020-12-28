@@ -1,5 +1,5 @@
-# coalition-activity-crunch
-Python utilty to crunch membership statistics for EVE Online coalitions.
+# Coalition Tenure Calculator
+Python utilty to calculate average player tenure for EVE Online coalitions.
 
 Commisioned by Padrick Millar. 
 

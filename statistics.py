@@ -11,10 +11,10 @@ client = EsiClient(
     raw_body_only=False,  # default False, set to True to never parse response and only return raw JSON string content.
 )
 
-with open('./characters.json') as f:
+with open('./storage/characters.json') as f:
         static_character_data = json.load(f)
 
-with open('./alliances.json') as f:
+with open('./storage/alliances.json') as f:
         static_alliance_data = json.load(f)
 
 
@@ -23,7 +23,7 @@ def write_static_character_data(character_id, data):
     This query takes forever, to be nicer to ESI we will store static data instead of re-running
     """
     static_character_data[character_id] = data 
-    with open('./characters.json', 'w') as f:
+    with open('./storage/characters.json', 'w') as f:
         json.dump(static_character_data, f, indent=4)
 
 def write_static_alliance_data(alliance_id, data):
@@ -31,7 +31,7 @@ def write_static_alliance_data(alliance_id, data):
     This query takes forever, to be nicer to ESI we will store static data instead of re-running
     """
     static_alliance_data[alliance_id] = data 
-    with open('./alliances.json', 'w') as f:
+    with open('./storage/alliances.json', 'w') as f:
         json.dump(static_alliance_data, f, indent=4)
 
 def parse_alliance_names_from_json(data):
@@ -94,14 +94,14 @@ def calculate_coalition_activity(coalition_name, data, alliance_ids):
         alliance_average = member_retention_average / len(alliance_members)
         alliance_data[alliance] = alliance_average 
         print("")
-        
+
     return alliance_data
 
 
 
 
 if __name__ == "__main__": 
-    with open('./coalitions.json') as f:
+    with open('./config/coalitions.json') as f:
         data = json.load(f)
     
     coalition_names = data.keys()
@@ -115,7 +115,7 @@ if __name__ == "__main__":
         coalition_data[coalition] = calculate_coalition_activity(coalition, data, alliance_ids)
 
 
-    with open('output.csv', 'w') as f:  # Just use 'w' mode in 3.x
+    with open('./output/output.csv', 'w') as f:  # Just use 'w' mode in 3.x
         print("Writing to output.csv")
         for coalition in coalition_data.keys():
             w = csv.DictWriter(f, coalition_data[coalition].keys())
