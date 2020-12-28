@@ -75,27 +75,26 @@ def get_alliance_members(alliance_id):
     return response.json()['characters']
 
 def calculate_coalition_activity(coalition_name, data, alliance_ids):
-    print("Calculating coalition activity...")
+    print("Calculating coalition activity... %s" % coalition_name)
     alliance_data = {}
-    for key in data:
-        for alliance in data[key]:
-            print("Processing alliance: %s" % alliance)
-            alliance_id = alliance_ids[alliance]
-            member_retention_average = 0 
-            alliance_members = get_alliance_members(alliance_id)
-            progression_counter = 0
-            progression_threshold = int(len(alliance_members)/10)
-            for member in alliance_members:
-                progression_counter += 1
-                if (progression_counter % progression_threshold) == 0:
-                    print(".", end="")
-                history_delta = get_character_history(member['character_id'])
-                member_retention_average += history_delta
+    for alliance in data[coalition_name]:
+        print("Processing alliance: %s" % alliance)
+        alliance_id = alliance_ids[alliance]
+        member_retention_average = 0 
+        alliance_members = get_alliance_members(alliance_id)
+        progression_counter = 0
+        progression_threshold = int(len(alliance_members)/10)
+        for member in alliance_members:
+            progression_counter += 1
+            if (progression_counter % progression_threshold) == 0:
+                print(".", end="")
+            history_delta = get_character_history(member['character_id'])
+            member_retention_average += history_delta
 
-            alliance_average = member_retention_average / len(alliance_members)
-            alliance_data[alliance] = alliance_average 
-    
-    print("")
+        alliance_average = member_retention_average / len(alliance_members)
+        alliance_data[alliance] = alliance_average 
+        print("")
+        
     return alliance_data
 
 
@@ -113,12 +112,12 @@ if __name__ == "__main__":
     
     coalition_data = {}
     for coalition in coalition_names:
-        coalition_data[coalition] = calculate_coalition_activity(coalition_names, data, alliance_ids)
+        coalition_data[coalition] = calculate_coalition_activity(coalition, data, alliance_ids)
 
 
     with open('output.csv', 'w') as f:  # Just use 'w' mode in 3.x
+        print("Writing to output.csv")
         for coalition in coalition_data.keys():
-            print(coalition)
             w = csv.DictWriter(f, coalition_data[coalition].keys())
             w.writeheader()
             w.writerow(coalition_data[coalition])
